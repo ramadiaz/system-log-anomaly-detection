@@ -9,6 +9,7 @@ This project implements a machine learning-based system for detecting anomalies 
 - Real-time log monitoring
 - Visualization of anomalies
 - REST API for log analysis
+- Synthetic data generation for larger training sets
 
 ## Setup
 
@@ -48,17 +49,27 @@ python app.py
 
 ## Dataset
 
-The project uses the HDFS (Hadoop Distributed File System) log dataset, which contains system logs with labeled anomalies. The dataset is available on Kaggle.
+The project uses the HDFS (Hadoop Distributed File System) log dataset as a base, which is then augmented with synthetic data to create a larger training set.
 
-### Dataset Options
+### Dataset Generation
 
-- **HDFS Full LogHub Dataset (from LogPai)**
-  - [HDFS.log](https://raw.githubusercontent.com/logpai/loghub/master/HDFS/HDFS.log) (about 1.6 million lines)
-  - Contains real anomaly labels.
+1. **Base Dataset**: Uses HDFS_2k.log from LogPai repository
+2. **Synthetic Data Generation**:
+   - Creates variations of original logs
+   - Adds random variations in log levels
+   - Generates 10 variations per original log
+   - Combines original and synthetic data
 
-- **Kaggle: HDFS Log Anomaly Detection Dataset**
-  - [Kaggle HDFS Log Anomaly Detection Dataset](https://www.kaggle.com/datasets/cheongwoongkang/hdfs-log-anomaly-detection)
-  - Contains both log lines and anomaly labels.
+### Anomaly Detection Patterns
+
+The system detects anomalies based on patterns like:
+- Log levels (ERROR, WARNING, CRITICAL)
+- Exception messages
+- Error indicators
+- Connection issues
+- Permission problems
+- Memory issues
+- Timeout events
 
 ## Model
 
@@ -70,6 +81,11 @@ The project implements an Isolation Forest algorithm for anomaly detection, whic
    ```bash
    python src/download_dataset.py
    ```
+   This will:
+   - Download the base HDFS dataset
+   - Generate synthetic variations
+   - Create training and test sets
+   - Apply anomaly labels
 
 2. **Train the Model:**
    ```bash
@@ -88,12 +104,12 @@ The project implements an Isolation Forest algorithm for anomaly detection, whic
 
 ## Anomaly Detection
 
-The model marks logs as anomalies based on statistical outliers in features like:
-- Log level (ERROR, WARNING, CRITICAL vs. INFO)
-- Message length
-- Number of special characters
-- Number of numbers
-- Rare words (e.g., Exception, failure, crash)
+The model marks logs as anomalies based on:
+- Statistical outliers in features
+- Pattern matching for known error types
+- Log level analysis
+- Message content analysis
+- Special character and number patterns
 
 Check the `reports/test_report.txt` file for detailed anomaly reports.
 
