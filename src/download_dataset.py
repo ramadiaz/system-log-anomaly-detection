@@ -2,57 +2,43 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-import requests
+import kaggle
 import zipfile
 import io
 
 def download_hdfs_dataset():
     """
-    Download the full HDFS log dataset from LogPai.
+    Download the log dataset from Kaggle using the Kaggle API.
+    Note: You need to have kaggle.json in ~/.kaggle/ directory
     """
     # Create data directory if it doesn't exist
     os.makedirs('data', exist_ok=True)
     
-    # Download the dataset
-    print("Downloading full HDFS dataset...")
-    url = "https://raw.githubusercontent.com/logpai/loghub/master/HDFS/HDFS_2k.log"
-    response = requests.get(url)
+    # Check if the target file exists
+    target_file_path = os.path.join('data', 'hdfs_log', 'hdfs.log', 'sorted.log')
+    if not os.path.exists(target_file_path):
+        print("Downloading dataset from Kaggle...")
+        try:
+            # Download and unzip the entire dataset
+            kaggle.api.dataset_download_files(
+                'krishd123/log-data-for-anomaly-detection',
+                path='data',
+                unzip=True
+            )
+            print("Dataset downloaded and extracted successfully!")
+        except Exception as e:
+            print(f"Error downloading dataset: {str(e)}")
+            print("\nPlease make sure you have:")
+            print("1. Installed kaggle package: pip install kaggle")
+            print("2. Placed kaggle.json in ~/.config/kaggle/ directory")
+            print("3. Set correct permissions: chmod 600 ~/.config/kaggle/kaggle.json")
+            return False
+        # Check again if the file exists after extraction
+        if not os.path.exists(target_file_path):
+            print(f"File {target_file_path} not found after extraction.")
+            return False
     
-    if response.status_code == 200:
-        # Save the raw log file
-        with open('data/HDFS.log', 'w') as f:
-            f.write(response.text)
-        print("Dataset downloaded successfully!")
-        
-        # Generate more synthetic data to increase the dataset size
-        print("Generating additional synthetic log entries...")
-        with open('data/HDFS.log', 'r') as f:
-            original_logs = f.readlines()
-        
-        # Create variations of the original logs
-        synthetic_logs = []
-        for log in original_logs:
-            # Create 10 variations of each log
-            for i in range(10):
-                # Add some random noise to timestamps
-                if 'INFO' in log:
-                    synthetic_logs.append(log.replace('INFO', np.random.choice(['INFO', 'WARNING', 'ERROR'])))
-                else:
-                    synthetic_logs.append(log)
-        
-        # Combine original and synthetic logs
-        all_logs = original_logs + synthetic_logs
-        
-        # Save the combined dataset
-        with open('data/HDFS.log', 'w') as f:
-            f.writelines(all_logs)
-        
-        print(f"Generated {len(synthetic_logs)} additional log entries")
-        print(f"Total log entries: {len(all_logs)}")
-    else:
-        print(f"Failed to download dataset. Status code: {response.status_code}")
-        return False
-    
+    print(f"File {target_file_path} found successfully!")
     return True
 
 def prepare_dataset():
@@ -61,15 +47,12 @@ def prepare_dataset():
     """
     print("Preparing dataset...")
     
-    # Read the log file
-    with open('data/HDFS.log', 'r') as f:
+    # Read the log file line by line into a DataFrame
+    log_file_path = os.path.join('data', 'hdfs_log', 'hdfs.log', 'sorted.log')
+    with open(log_file_path, 'r', encoding='utf-8', errors='ignore') as f:
         logs = f.readlines()
-    
-    print(f"Total log entries: {len(logs)}")
-    
-    # Create a more realistic labeled dataset
-    # In a real scenario, you would use the actual labels from the dataset
-    np.random.seed(42)
+    df = pd.DataFrame({'log': [log.strip() for log in logs]})
+    print(f"Total log entries: {len(df)}")
     
     # Define patterns that might indicate anomalies
     anomaly_patterns = [
@@ -85,24 +68,24 @@ def prepare_dataset():
         'ClassNotFoundException',
         'WARNING',
         'ERROR',
-        'CRITICAL'
+        'CRITICAL',
+        'Fatal',
+        'Invalid',
+        'Missing',
+        'Not found',
+        'Access denied',
+        'Authentication failed',
+        'Connection lost'
     ]
     
     # Create labels based on patterns
-    labels = np.zeros(len(logs))
-    for i, log in enumerate(logs):
-        if any(pattern.lower() in log.lower() for pattern in anomaly_patterns):
+    labels = np.zeros(len(df))
+    for i, log in enumerate(df['log']):
+        if any(pattern.lower() in str(log).lower() for pattern in anomaly_patterns):
             labels[i] = 1
     
-    # Add some random anomalies to ensure diversity
-    random_anomalies = np.random.choice([0, 1], size=len(logs), p=[0.98, 0.02])
-    labels = np.logical_or(labels, random_anomalies).astype(int)
-    
-    # Create DataFrame
-    df = pd.DataFrame({
-        'log': logs,
-        'label': labels
-    })
+    # Add the labels to the dataframe
+    df['label'] = labels
     
     # Split into train and test sets
     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
