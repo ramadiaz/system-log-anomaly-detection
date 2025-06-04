@@ -1,0 +1,47 @@
+Anomaly Detection Report
+Generated on: 2025-06-04 18:51:54
+Total logs analyzed: 801
+Number of anomalies detected: 335
+
+Top Anomalies:
+--------------------------------------------------------------------------------
+Index: 215
+Score: 0.6793
+Log: "081110 014914 30 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/randtxt/_temporary/_task_200811092030_0003_m_001728_0/part-01728. blk_-488298625688742454
+--------------------------------------------------------------------------------
+Index: 299
+Score: 0.6793
+Log: "081109 234110 26 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/sortrand/_temporary/_task_200811092030_0002_r_000296_0/part-00296. blk_-6620182933895093708
+--------------------------------------------------------------------------------
+Index: 479
+Score: 0.6793
+Log: "081110 111404 30 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/rand/_temporary/_task_200811101024_0001_m_001495_0/part-01495. blk_-7592643790414500555
+--------------------------------------------------------------------------------
+Index: 507
+Score: 0.6793
+Log: "081110 103657 32 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/rand/_temporary/_task_200811101024_0001_m_000097_0/part-00097. blk_496376132244907301
+--------------------------------------------------------------------------------
+Index: 537
+Score: 0.6793
+Log: "081110 011521 33 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/randtxt/_temporary/_task_200811092030_0003_m_000705_0/part-00705. blk_-9162090767925303921
+--------------------------------------------------------------------------------
+Index: 689
+Score: 0.6793
+Log: "081110 110921 35 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/rand/_temporary/_task_200811101024_0001_m_001197_0/part-01197. blk_-5255262711039499896
+--------------------------------------------------------------------------------
+Index: 739
+Score: 0.6793
+Log: "081110 015600 28 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/randtxt/_temporary/_task_200811092030_0003_m_001817_0/part-01817. blk_3291173852929756766
+--------------------------------------------------------------------------------
+Index: 73
+Score: 0.6710
+Log: "081111 065920 34 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/rand6/_temporary/_task_200811101024_0013_m_000197_0/part-00197. blk_1832308388558480
+--------------------------------------------------------------------------------
+Index: 195
+Score: 0.6710
+Log: "081111 031436 32 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/rand4/_temporary/_task_200811101024_0009_m_001398_0/part-01398. blk_-7527506469734664572
+--------------------------------------------------------------------------------
+Index: 271
+Score: 0.6710
+Log: "081111 030942 32 INFO dfs.FSNamesystem: BLOCK* NameSystem.allocateBlock: /user/root/rand4/_temporary/_task_200811101024_0009_m_001281_0/part-01281. blk_2084123600915946046
+--------------------------------------------------------------------------------

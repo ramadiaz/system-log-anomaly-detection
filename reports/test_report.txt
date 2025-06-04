@@ -1,0 +1,47 @@
+Anomaly Detection Report
+Generated on: 2025-06-04 18:53:11
+Total logs analyzed: 400
+Number of anomalies detected: 275
+
+Top Anomalies:
+--------------------------------------------------------------------------------
+Index: 2
+Score: 0.7432
+Log: 081111 042353 19811 INFO dfs.DataNode$PacketResponder: PacketResponder 2 for block blk_6918427074195439966 terminating
+--------------------------------------------------------------------------------
+Index: 3
+Score: 0.7432
+Log: 081110 211323 14609 INFO dfs.DataNode$PacketResponder: PacketResponder 0 for block blk_2089955821703690032 terminating
+--------------------------------------------------------------------------------
+Index: 4
+Score: 0.7432
+Log: 081111 035834 19205 INFO dfs.DataNode$PacketResponder: PacketResponder 1 for block blk_4638603954320058978 terminating
+--------------------------------------------------------------------------------
+Index: 11
+Score: 0.7432
+Log: 081111 035948 19511 INFO dfs.DataNode$PacketResponder: PacketResponder 1 for block blk_-2421414377433740760 terminating
+--------------------------------------------------------------------------------
+Index: 16
+Score: 0.7432
+Log: 081110 145818 12949 INFO dfs.DataNode$PacketResponder: PacketResponder 1 for block blk_2570966823909513791 terminating
+--------------------------------------------------------------------------------
+Index: 18
+Score: 0.7432
+Log: 081111 072053 23570 INFO dfs.DataNode$PacketResponder: PacketResponder 1 for block blk_2096030750186708493 terminating
+--------------------------------------------------------------------------------
+Index: 20
+Score: 0.7432
+Log: 081110 123541 11406 INFO dfs.DataNode$PacketResponder: PacketResponder 1 for block blk_-8939321760994370713 terminating
+--------------------------------------------------------------------------------
+Index: 22
+Score: 0.7432
+Log: 081111 101117 26526 INFO dfs.DataNode$PacketResponder: PacketResponder 2 for block blk_8418106412701718933 terminating
+--------------------------------------------------------------------------------
+Index: 40
+Score: 0.7432
+Log: 081109 234512 4223 INFO dfs.DataNode$PacketResponder: PacketResponder 0 for block blk_-7640601843607665080 terminating
+--------------------------------------------------------------------------------
+Index: 41
+Score: 0.7432
+Log: 081111 093742 13 INFO dfs.DataBlockScanner: Verification succeeded for blk_-8347949825960763812
+--------------------------------------------------------------------------------
