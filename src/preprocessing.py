@@ -53,11 +53,36 @@ class LogPreprocessor:
         block_ids = re.findall(block_pattern, log_line)
         features['block_count'] = len(block_ids)
         
+        # HDFS specific patterns
+        hdfs_patterns = {
+            'block_delete': r'BLOCK\* ask.*to delete',
+            'block_received': r'BLOCK\* Received',
+            'block_allocated': r'BLOCK\* allocate',
+            'block_replicated': r'BLOCK\* replicate',
+            'block_verified': r'BLOCK\* verify',
+            'block_corrupt': r'BLOCK\* corrupt',
+            'block_missing': r'BLOCK\* missing',
+            'block_under_replicated': r'BLOCK\* under_replicated',
+            'block_over_replicated': r'BLOCK\* over_replicated',
+            'block_recovery': r'BLOCK\* recovery',
+            'block_failed': r'BLOCK\* failed',
+            'block_timeout': r'BLOCK\* timeout',
+            'block_error': r'BLOCK\* error',
+            'block_exception': r'BLOCK\* exception',
+            'block_warning': r'BLOCK\* warning'
+        }
+        
+        # Count HDFS specific patterns
+        for pattern_name, pattern in hdfs_patterns.items():
+            features[f'hdfs_{pattern_name}'] = 1 if re.search(pattern, log_line) else 0
+        
         # Extract error patterns
         error_patterns = [
             'Exception', 'Error', 'Failed', 'Timeout', 'Connection refused',
             'Permission denied', 'OutOfMemory', 'NullPointerException',
-            'StackOverflowError', 'ClassNotFoundException'
+            'StackOverflowError', 'ClassNotFoundException', 'IOException',
+            'SocketTimeoutException', 'ConnectException', 'UnknownHostException',
+            'EOFException', 'FileNotFoundException', 'SecurityException'
         ]
         features['error_count'] = sum(1 for pattern in error_patterns if pattern in log_line)
         
