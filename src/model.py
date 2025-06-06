@@ -36,8 +36,14 @@ class AnomalyDetector:
         # Calculate anomaly scores for training data
         scores = -self.model.score_samples(X)
         
-        # Set threshold based on percentile
-        self.threshold = np.percentile(scores, self.threshold_percentile)
+        # Set threshold based on percentile and mean
+        mean_score = np.mean(scores)
+        std_score = np.std(scores)
+        percentile_threshold = np.percentile(scores, self.threshold_percentile)
+        
+        # Use the lower of the two thresholds to be more sensitive
+        self.threshold = min(percentile_threshold, mean_score + std_score)
+        
         print(f"Anomaly threshold set to: {self.threshold:.4f}")
         print(f"Number of anomalies in training set: {np.sum(scores > self.threshold)}")
         

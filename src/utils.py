@@ -23,7 +23,7 @@ def plot_anomalies(log_data, predictions, scores, save_path=None):
     
     Args:
         log_data (list): List of log lines
-        predictions (numpy.ndarray): Model predictions (-1 for anomalies, 1 for normal)
+        predictions (numpy.ndarray): Model predictions (1 for anomalies, 0 for normal)
         scores (numpy.ndarray): Anomaly scores
         save_path (str, optional): Path to save the plot
     """
@@ -43,7 +43,7 @@ def plot_anomalies(log_data, predictions, scores, save_path=None):
     plt.scatter(range(len(predictions)), predictions, c=predictions, cmap='coolwarm')
     plt.title('Anomaly Predictions')
     plt.xlabel('Log Entry')
-    plt.ylabel('Prediction (-1: Anomaly, 1: Normal)')
+    plt.ylabel('Prediction (1: Anomaly, 0: Normal)')
     
     if save_path:
         plt.savefig(save_path)
@@ -55,13 +55,13 @@ def generate_report(log_data, predictions, scores, output_path):
     
     Args:
         log_data (list): List of log lines
-        predictions (numpy.ndarray): Model predictions
+        predictions (numpy.ndarray): Model predictions (1 for anomalies, 0 for normal)
         scores (numpy.ndarray): Anomaly scores
         output_path (str): Path to save the report
     """
     anomalies = []
     for i, (log, pred, score) in enumerate(zip(log_data, predictions, scores)):
-        if pred == -1:  # Anomaly
+        if pred == 1:  # Anomaly
             anomalies.append({
                 'index': i,
                 'log': log.strip(),

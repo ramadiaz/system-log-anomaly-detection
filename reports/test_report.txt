@@ -1,7 +1,47 @@
 Anomaly Detection Report
-Generated on: 2025-06-06 15:10:39
+Generated on: 2025-06-06 16:04:13
 Total logs analyzed: 2239541
-Number of anomalies detected: 0
+Number of anomalies detected: 1107076
 
 Top Anomalies:
+--------------------------------------------------------------------------------
+Index: 375731
+Score: 0.7192
+Log: 081110 143119 19 WARN dfs.DataNode: org.apache.hadoop.util.Shell$ExitCodeException: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_-7127193178912698966.meta': No such file or directory
+--------------------------------------------------------------------------------
+Index: 469581
+Score: 0.7192
+Log: 081110 143318 19 WARN dfs.DataNode: org.apache.hadoop.util.Shell$ExitCodeException: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_6524529021557367013.meta': No such file or directory
+--------------------------------------------------------------------------------
+Index: 1023033
+Score: 0.7192
+Log: 081110 213333 19 WARN dfs.DataNode: org.apache.hadoop.util.Shell$ExitCodeException: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_-5525258413754942383.meta': No such file or directory
+--------------------------------------------------------------------------------
+Index: 1568862
+Score: 0.7192
+Log: 081110 143210 19 WARN dfs.DataNode: org.apache.hadoop.util.Shell$ExitCodeException: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_1887357053968010563.meta': No such file or directory
+--------------------------------------------------------------------------------
+Index: 933128
+Score: 0.7188
+Log: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_-929729437274525861': No such file or directory
+--------------------------------------------------------------------------------
+Index: 1429736
+Score: 0.7185
+Log: 081110 143335 19 WARN dfs.DataNode: org.apache.hadoop.util.Shell$ExitCodeException: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_5062881150956652870': No such file or directory
+--------------------------------------------------------------------------------
+Index: 1714867
+Score: 0.7185
+Log: 081110 143153 19 WARN dfs.DataNode: org.apache.hadoop.util.Shell$ExitCodeException: du: cannot access `/mnt/hadoop/dfs/data/tmp/blk_6365703013388778393': No such file or directory
+--------------------------------------------------------------------------------
+Index: 167794
+Score: 0.7175
+Log: 081109 224505 3649 WARN dfs.DataNode$DataXceiver: 10.251.67.4:50010:Got exception while serving blk_-66647023577136329 to /10.251.71.68:
+--------------------------------------------------------------------------------
+Index: 194308
+Score: 0.7175
+Log: 081109 215714 3083 WARN dfs.DataNode$DataXceiver: 10.251.66.3:50010:Got exception while serving blk_-8902048459092357217 to /10.250.6.4:
+--------------------------------------------------------------------------------
+Index: 199937
+Score: 0.7175
+Log: 081110 035725 6665 WARN dfs.DataNode$DataXceiver: 10.251.70.37:50010:Got exception while serving blk_-15100088427831780 to /10.251.66.3:
 --------------------------------------------------------------------------------

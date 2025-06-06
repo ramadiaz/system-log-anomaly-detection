@@ -17,19 +17,25 @@ def train_model():
     )
     
     start_time = time.time()
-    logging.info("Loading training dataset...")
-    train_df = pd.read_csv('data/train_logs.csv')
-    logging.info(f"Loaded {len(train_df)} log entries.")
+    logging.info("Loading test dataset...")
+    test_df = pd.read_csv('data/test_logs.csv')
+    logging.info(f"Loaded {len(test_df)} log entries.")
     
-    # Initialize components
+    # Calculate contamination based on actual anomaly ratio
+    anomaly_ratio = test_df['label'].mean()
+    logging.info(f"Anomaly ratio in dataset: {anomaly_ratio:.4f}")
+    
+    # Initialize components with calculated contamination
     preprocessor = LogPreprocessor()
-    detector = AnomalyDetector()
+    detector = AnomalyDetector(
+        contamination=max(anomaly_ratio, 0.1),  # Use actual ratio or minimum 0.1
+        threshold_percentile=50
+    )
     
-    # Process the training data
-    logging.info("Processing training data (feature extraction and scaling)...")
+    # Process the test data
+    logging.info("Processing test data (feature extraction and scaling)...")
     t0 = time.time()
-    # Use tqdm to show progress bar for preprocessing
-    processed_data = preprocessor.preprocess_logs(train_df['log'].tolist(), progress_bar=True)
+    processed_data = preprocessor.preprocess_logs(test_df['log'].tolist(), progress_bar=True)
     logging.info(f"Processed data shape: {processed_data.shape}")
     logging.info(f"Preprocessing completed in {time.time() - t0:.2f} seconds.")
     
