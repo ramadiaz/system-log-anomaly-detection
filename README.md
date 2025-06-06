@@ -1,22 +1,27 @@
 # System Log Anomaly Detection
 
-This project implements a machine learning-based system for detecting anomalies in system logs. It helps identify unusual patterns and potential security threats in system logs.
+This project implements a machine learning-based system for detecting anomalies in system logs using the Isolation Forest algorithm. The system processes log data, extracts meaningful features, and identifies unusual patterns that may indicate system issues or security threats.
 
 ## Features
 
 - Log data preprocessing and feature extraction
-- Anomaly detection using machine learning
-- Real-time log monitoring
-- Visualization of anomalies
-- REST API for log analysis
-- Synthetic data generation for larger training sets
+- Anomaly detection using Isolation Forest algorithm
+- CSV-based anomaly reporting
+- Comprehensive feature engineering for log analysis
 
-## Setup
+## System Requirements
+
+- Python 3.8 or newer
+- pip (Python package manager)
+- Internet access for dataset download
+- Kaggle API credentials
+
+## Installation
 
 1. Create a virtual environment:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
 2. Install dependencies:
@@ -24,95 +29,105 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-3. Run the application:
-```bash
-python app.py
-```
+3. Set up Kaggle API:
+   - Install kaggle package: `pip install kaggle`
+   - Place kaggle.json in `~/.config/kaggle/`
+   - Set correct permissions: `chmod 600 ~/.config/kaggle/kaggle.json`
 
 ## Project Structure
 
 ```
 .
-├── app.py                 # Flask application
-├── models/               # ML model files
-├── data/                 # Dataset and processed data
-├── src/                  # Source code
-│   ├── preprocessing.py  # Data preprocessing
-│   ├── model.py         # ML model implementation
-│   ├── utils.py         # Utility functions
-│   ├── download_dataset.py  # Script to download and prepare the dataset
-│   ├── train_model.py   # Script to train the model
-│   └── test_model.py    # Script to test the model
-├── requirements.txt      # Project dependencies
-└── README.md            # Project documentation
+├── models/                   # ML model files
+├── data/                     # Dataset and processed data
+├── reports/                  # Analysis results and reports
+├── src/                      # Source code
+│   ├── preprocessing.py      # Log data preprocessing
+│   ├── model.py             # ML model implementation
+│   ├── utils.py             # Utility functions
+│   ├── download_dataset.py  # Dataset download and preparation
+│   ├── train_model.py       # Model training script
+│   └── test_model.py        # Model testing script
+├── requirements.txt          # Project dependencies
+└── README.md                # Project documentation
 ```
 
 ## Dataset
 
-The project uses the HDFS (Hadoop Distributed File System) log dataset as a base, which is then augmented with synthetic data to create a larger training set.
+The project uses the HDFS (Hadoop Distributed File System) log dataset from Kaggle. The dataset is processed to identify anomalies based on predefined patterns and split into training and testing sets.
 
-### Dataset Generation
+### Dataset Processing
 
-1. **Base Dataset**: Uses HDFS_2k.log from LogPai repository
-2. **Synthetic Data Generation**:
-   - Creates variations of original logs
-   - Adds random variations in log levels
-   - Generates 10 variations per original log
-   - Combines original and synthetic data
+1. **Source**: HDFS log dataset from Kaggle
+2. **Processing Steps**:
+   - Download dataset using Kaggle API
+   - Extract and read log entries
+   - Label anomalies based on predefined patterns
+   - Split into training (80%) and testing (20%) sets
 
-### Anomaly Detection Patterns
+### Feature Engineering
 
-The system detects anomalies based on patterns like:
-- Log levels (ERROR, WARNING, CRITICAL)
-- Exception messages
-- Error indicators
-- Connection issues
-- Permission problems
-- Memory issues
-- Timeout events
+The system extracts the following features from log entries:
+- Log levels (INFO, WARNING, ERROR, CRITICAL, DEBUG, FATAL)
+- Error pattern counts
+- Message length
+- Special character count
+- Number count
+- Block ID count (HDFS-specific)
 
 ## Model
 
-The project implements an Isolation Forest algorithm for anomaly detection, which is particularly effective for detecting anomalies in system logs.
+The project implements an Isolation Forest algorithm for anomaly detection with the following characteristics:
+- 100 estimators (trees) for robust detection
+- Adaptive contamination rate based on dataset
+- Dynamic threshold calculation using percentile and standard deviation
+- Parallel processing support (4 cores)
 
 ## Usage
 
-1. **Download and Prepare the Dataset:**
+1. **Download and Prepare Dataset:**
    ```bash
    python src/download_dataset.py
    ```
    This will:
-   - Download the base HDFS dataset
-   - Generate synthetic variations
+   - Download the HDFS dataset from Kaggle
+   - Process and label the log entries
    - Create training and test sets
-   - Apply anomaly labels
+   - Save processed datasets
 
-2. **Train the Model:**
+2. **Train Model:**
    ```bash
    python src/train_model.py
    ```
 
-3. **Test the Model:**
+3. **Test Model:**
    ```bash
    python src/test_model.py
    ```
 
-4. **Run the Web Application:**
-   ```bash
-   python app.py
-   ```
-
 ## Anomaly Detection
 
-The model marks logs as anomalies based on:
+The model identifies anomalies based on:
 - Statistical outliers in features
 - Pattern matching for known error types
 - Log level analysis
 - Message content analysis
 - Special character and number patterns
 
-Check the `reports/test_report.txt` file for detailed anomaly reports.
+The anomaly report is available in CSV format at `reports/anomaly_list.csv` with:
+- Log index
+- Log entry
+- Anomaly score
+
+## Performance Metrics
+
+The system provides the following evaluation metrics:
+- Accuracy
+- Precision
+- Recall
+- Detailed anomaly reports
+- Comprehensive test results
 
 ## Contributing
 
-Feel free to submit issues and enhancement requests! 
+Feel free to submit issues and enhancement requests!
