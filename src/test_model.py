@@ -36,9 +36,9 @@ def test_model():
     scores = detector.predict_proba(processed_data)
     
     # Generate visualizations and report
-    print("Generating visualizations and report...")
-    plot_path = os.path.join('static', 'test_anomalies.png')
-    plot_anomalies(test_df['log'].tolist(), predictions, scores, plot_path)
+    print("Generating report...")
+    # plot_path = os.path.join('static', 'test_anomalies.png')
+    # plot_anomalies(test_df['log'].tolist(), predictions, scores, plot_path)
     
     report_path = os.path.join('reports', 'test_report.txt')
     generate_report(test_df['log'].tolist(), predictions, scores, report_path)
@@ -62,7 +62,7 @@ def test_model():
     print(f"Accuracy: {accuracy:.4f}")
     print(f"Precision: {precision:.4f}")
     print(f"Recall: {recall:.4f}")
-    print(f"\nVisualization saved to: {plot_path}")
+    # print(f"\nVisualization saved to: {plot_path}")
     print(f"Detailed report saved to: {report_path}")
 
 if __name__ == "__main__":

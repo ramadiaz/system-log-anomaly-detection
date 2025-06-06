@@ -4,7 +4,7 @@ import joblib
 import os
 
 class AnomalyDetector:
-    def __init__(self, contamination=0.15, threshold_percentile=85):
+    def __init__(self, contamination=0.5, threshold_percentile=50):
         """
         Initialize the anomaly detector.
         
@@ -13,12 +13,12 @@ class AnomalyDetector:
             threshold_percentile (float): Percentile to use as threshold for anomaly scores.
         """
         self.model = IsolationForest(
-            n_estimators=100,  # Reduced to prevent overfitting
+            n_estimators=100,  # Increased number of trees for better detection
             max_samples='auto',
             contamination=contamination,
             random_state=42,
-            n_jobs=-1,  # Use all available cores
-            verbose=1  # Show progress during training
+            n_jobs=4,  # Limit to 4 cores
+            verbose=1
         )
         self.threshold_percentile = threshold_percentile
         self.threshold = None
