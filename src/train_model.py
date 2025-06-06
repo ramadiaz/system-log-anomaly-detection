@@ -8,7 +8,12 @@ from tqdm import tqdm
 
 def train_model():
     """
-    Train the anomaly detection model with the prepared dataset.
+    Melatih model deteksi anomali dengan dataset yang telah disiapkan.
+    Fungsi ini akan:
+    1. Memuat dataset pelatihan
+    2. Memproses data log
+    3. Melatih model deteksi anomali
+    4. Menyimpan model dan scaler yang telah dilatih
     """
     logging.basicConfig(
         level=logging.INFO,
@@ -17,43 +22,43 @@ def train_model():
     )
     
     start_time = time.time()
-    logging.info("Loading test dataset...")
-    test_df = pd.read_csv('data/test_logs.csv')
-    logging.info(f"Loaded {len(test_df)} log entries.")
+    logging.info("Memuat dataset pelatihan...")
+    test_df = pd.read_csv('data/train_logs.csv')
+    logging.info(f"Memuat {len(test_df)} entri log.")
     
-    # Calculate contamination based on actual anomaly ratio
+    # Hitung kontaminasi berdasarkan rasio anomali aktual
     anomaly_ratio = test_df['label'].mean()
-    logging.info(f"Anomaly ratio in dataset: {anomaly_ratio:.4f}")
+    logging.info(f"Rasio anomali dalam dataset: {anomaly_ratio:.4f}")
     
-    # Initialize components with calculated contamination
+    # Inisialisasi komponen dengan kontaminasi yang dihitung
     preprocessor = LogPreprocessor()
     detector = AnomalyDetector(
-        contamination=max(anomaly_ratio, 0.1),  # Use actual ratio or minimum 0.1
+        contamination=max(anomaly_ratio, 0.1),  # Gunakan rasio aktual atau minimum 0.1
         threshold_percentile=50
     )
     
-    # Process the test data
-    logging.info("Processing test data (feature extraction and scaling)...")
+    # Proses data pelatihan
+    logging.info("Memproses data pelatihan (ekstraksi fitur dan penskalaan)...")
     t0 = time.time()
     processed_data = preprocessor.preprocess_logs(test_df['log'].tolist(), progress_bar=True)
-    logging.info(f"Processed data shape: {processed_data.shape}")
-    logging.info(f"Preprocessing completed in {time.time() - t0:.2f} seconds.")
+    logging.info(f"Bentuk data yang diproses: {processed_data.shape}")
+    logging.info(f"Pemrosesan selesai dalam {time.time() - t0:.2f} detik.")
     
-    # Train the model
-    logging.info("Training model...")
+    # Latih model
+    logging.info("Melatih model...")
     t0 = time.time()
     detector.train(processed_data)
-    logging.info(f"Model training completed in {time.time() - t0:.2f} seconds.")
+    logging.info(f"Pelatihan model selesai dalam {time.time() - t0:.2f} detik.")
     
-    # Save the model and scaler
-    logging.info("Saving model and scaler...")
+    # Simpan model dan scaler
+    logging.info("Menyimpan model dan scaler...")
     os.makedirs('models', exist_ok=True)
     detector.save_model('models/anomaly_detector.joblib')
     preprocessor.save_scaler('models/scaler.joblib')
-    logging.info("Model and scaler saved successfully.")
-    logging.info(f"Model saved to: models/anomaly_detector.joblib")
-    logging.info(f"Scaler saved to: models/scaler.joblib")
-    logging.info(f"Total training pipeline completed in {time.time() - start_time:.2f} seconds.")
+    logging.info("Model dan scaler berhasil disimpan.")
+    logging.info(f"Model disimpan ke: models/anomaly_detector.joblib")
+    logging.info(f"Scaler disimpan ke: models/scaler.joblib")
+    logging.info(f"Total waktu pelatihan: {time.time() - start_time:.2f} detik.")
 
 if __name__ == "__main__":
     train_model() 

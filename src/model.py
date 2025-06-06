@@ -6,18 +6,18 @@ import os
 class AnomalyDetector:
     def __init__(self, contamination=0.5, threshold_percentile=50):
         """
-        Initialize the anomaly detector.
+        Inisialisasi detektor anomali.
         
-        Args:
-            contamination (float): The proportion of outliers in the data set.
-            threshold_percentile (float): Percentile to use as threshold for anomaly scores.
+        Parameter:
+            contamination (float): Proporsi outlier dalam dataset.
+            threshold_percentile (float): Persentil yang digunakan sebagai ambang batas untuk skor anomali.
         """
         self.model = IsolationForest(
-            n_estimators=100,  # Increased number of trees for better detection
+            n_estimators=100,  # Jumlah pohon ditingkatkan untuk deteksi yang lebih baik
             max_samples='auto',
             contamination=contamination,
             random_state=42,
-            n_jobs=4,  # Limit to 4 cores
+            n_jobs=4,  # Batasi ke 4 core
             verbose=1
         )
         self.threshold_percentile = threshold_percentile
@@ -25,59 +25,55 @@ class AnomalyDetector:
         
     def train(self, X):
         """
-        Train the anomaly detection model.
+        Melatih model deteksi anomali.
         
-        Args:
-            X (numpy.ndarray): Training data
+        Parameter:
+            X (numpy.ndarray): Data pelatihan
         """
-        # Fit the model
         self.model.fit(X)
         
-        # Calculate anomaly scores for training data
         scores = -self.model.score_samples(X)
         
-        # Set threshold based on percentile and mean
         mean_score = np.mean(scores)
         std_score = np.std(scores)
         percentile_threshold = np.percentile(scores, self.threshold_percentile)
         
-        # Use the lower of the two thresholds to be more sensitive
         self.threshold = min(percentile_threshold, mean_score + std_score)
         
-        print(f"Anomaly threshold set to: {self.threshold:.4f}")
-        print(f"Number of anomalies in training set: {np.sum(scores > self.threshold)}")
+        print(f"Ambang batas anomali ditetapkan ke: {self.threshold:.4f}")
+        print(f"Jumlah anomali dalam set pelatihan: {np.sum(scores > self.threshold)}")
         
     def predict(self, X):
         """
-        Predict anomalies in the data.
+        Memprediksi anomali dalam data.
         
-        Args:
-            X (numpy.ndarray): Data to predict
+        Parameter:
+            X (numpy.ndarray): Data yang akan diprediksi
             
         Returns:
-            numpy.ndarray: 1 for anomalies, 0 for normal
+            numpy.ndarray: 1 untuk anomali, 0 untuk normal
         """
         scores = -self.model.score_samples(X)
         return (scores > self.threshold).astype(int)
     
     def predict_proba(self, X):
         """
-        Get anomaly scores for the data.
+        Mendapatkan skor anomali untuk data.
         
-        Args:
-            X (numpy.ndarray): Data to predict
+        Parameter:
+            X (numpy.ndarray): Data yang akan diprediksi
             
         Returns:
-            numpy.ndarray: Anomaly scores (higher means more anomalous)
+            numpy.ndarray: Skor anomali (nilai lebih tinggi berarti lebih anomali)
         """
         return -self.model.score_samples(X)
     
     def save_model(self, path):
         """
-        Save the model to disk.
+        Menyimpan model ke disk.
         
-        Args:
-            path (str): Path to save the model
+        Parameter:
+            path (str): Path untuk menyimpan model
         """
         os.makedirs(os.path.dirname(path), exist_ok=True)
         model_data = {
@@ -89,10 +85,10 @@ class AnomalyDetector:
     
     def load_model(self, path):
         """
-        Load a saved model from disk.
+        Memuat model yang tersimpan dari disk.
         
-        Args:
-            path (str): Path to the saved model
+        Parameter:
+            path (str): Path ke model yang tersimpan
         """
         model_data = joblib.load(path)
         self.model = model_data['model']

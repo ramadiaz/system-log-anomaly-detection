@@ -8,53 +8,58 @@ import io
 
 def download_hdfs_dataset():
     """
-    Download the log dataset from Kaggle using the Kaggle API.
-    Note: You need to have kaggle.json in ~/.kaggle/ directory
+    Mengunduh dataset log dari Kaggle menggunakan Kaggle API.
+    Catatan: Anda perlu memiliki file kaggle.json di direktori ~/.kaggle/
     """
-    # Create data directory if it doesn't exist
+    # Buat direktori data jika belum ada
     os.makedirs('data', exist_ok=True)
     
-    # Check if the target file exists
+    # Periksa apakah file target sudah ada
     target_file_path = os.path.join('data', 'hdfs_log', 'hdfs.log', 'sorted.log')
     if not os.path.exists(target_file_path):
-        print("Downloading dataset from Kaggle...")
+        print("Mengunduh dataset dari Kaggle...")
         try:
-            # Download and unzip the entire dataset
+            # Unduh dan ekstrak seluruh dataset
             kaggle.api.dataset_download_files(
                 'krishd123/log-data-for-anomaly-detection',
                 path='data',
                 unzip=True
             )
-            print("Dataset downloaded and extracted successfully!")
+            print("Dataset berhasil diunduh dan diekstrak!")
         except Exception as e:
-            print(f"Error downloading dataset: {str(e)}")
-            print("\nPlease make sure you have:")
-            print("1. Installed kaggle package: pip install kaggle")
-            print("2. Placed kaggle.json in ~/.config/kaggle/ directory")
-            print("3. Set correct permissions: chmod 600 ~/.config/kaggle/kaggle.json")
+            print(f"Error saat mengunduh dataset: {str(e)}")
+            print("\nPastikan Anda telah:")
+            print("1. Menginstal paket kaggle: pip install kaggle")
+            print("2. Menempatkan kaggle.json di direktori ~/.config/kaggle/")
+            print("3. Mengatur izin yang benar: chmod 600 ~/.config/kaggle/kaggle.json")
             return False
-        # Check again if the file exists after extraction
+        # Periksa lagi apakah file ada setelah ekstraksi
         if not os.path.exists(target_file_path):
-            print(f"File {target_file_path} not found after extraction.")
+            print(f"File {target_file_path} tidak ditemukan setelah ekstraksi.")
             return False
     
-    print(f"File {target_file_path} found successfully!")
+    print(f"File {target_file_path} berhasil ditemukan!")
     return True
 
 def prepare_dataset():
     """
-    Prepare the dataset for training and testing.
+    Menyiapkan dataset untuk pelatihan dan pengujian.
+    Fungsi ini akan:
+    1. Membaca file log
+    2. Membuat label berdasarkan pola anomali
+    3. Membagi dataset menjadi set pelatihan dan pengujian
+    4. Menyimpan dataset yang telah diproses
     """
-    print("Preparing dataset...")
+    print("Menyiapkan dataset...")
     
-    # Read the log file line by line into a DataFrame
+    # Baca file log baris per baris ke dalam DataFrame
     log_file_path = os.path.join('data', 'hdfs_log', 'hdfs.log', 'sorted.log')
     with open(log_file_path, 'r', encoding='utf-8', errors='ignore') as f:
         logs = f.readlines()
     df = pd.DataFrame({'log': [log.strip() for log in logs]})
-    print(f"Total log entries: {len(df)}")
+    print(f"Total entri log: {len(df)}")
     
-    # Define patterns that might indicate anomalies
+    # Definisikan pola yang mungkin menunjukkan anomali
     anomaly_patterns = [
         'Exception',
         'Error',
@@ -78,29 +83,29 @@ def prepare_dataset():
         'Connection lost'
     ]
     
-    # Create labels based on patterns
+    # Buat label berdasarkan pola
     labels = np.zeros(len(df))
     for i, log in enumerate(df['log']):
         if any(pattern.lower() in str(log).lower() for pattern in anomaly_patterns):
             labels[i] = 1
     
-    # Add the labels to the dataframe
+    # Tambahkan label ke dataframe
     df['label'] = labels
     
-    # Split into train and test sets
+    # Bagi menjadi set pelatihan dan pengujian
     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
     
-    # Save the datasets
+    # Simpan dataset
     train_df.to_csv('data/train_logs.csv', index=False)
     test_df.to_csv('data/test_logs.csv', index=False)
     
-    print(f"\nDataset prepared successfully!")
-    print(f"Training set size: {len(train_df)}")
-    print(f"Test set size: {len(test_df)}")
-    print(f"Number of anomalies in training set: {train_df['label'].sum()}")
-    print(f"Number of anomalies in test set: {test_df['label'].sum()}")
-    print(f"Anomaly percentage in training set: {(train_df['label'].sum() / len(train_df) * 100):.2f}%")
-    print(f"Anomaly percentage in test set: {(test_df['label'].sum() / len(test_df) * 100):.2f}%")
+    print(f"\nDataset berhasil disiapkan!")
+    print(f"Ukuran set pelatihan: {len(train_df)}")
+    print(f"Ukuran set pengujian: {len(test_df)}")
+    print(f"Jumlah anomali dalam set pelatihan: {train_df['label'].sum()}")
+    print(f"Jumlah anomali dalam set pengujian: {test_df['label'].sum()}")
+    print(f"Persentase anomali dalam set pelatihan: {(train_df['label'].sum() / len(train_df) * 100):.2f}%")
+    print(f"Persentase anomali dalam set pengujian: {(test_df['label'].sum() / len(test_df) * 100):.2f}%")
 
 def main():
     if download_hdfs_dataset():

@@ -6,44 +6,44 @@ import numpy as np
 
 def load_log_data(file_path):
     """
-    Load log data from a file.
+    Memuat data log dari file.
     
-    Args:
-        file_path (str): Path to the log file
+    Parameter:
+        file_path (str): Path ke file log
         
     Returns:
-        list: List of log lines
+        list: Daftar baris log
     """
     with open(file_path, 'r') as f:
         return f.readlines()
 
 def plot_anomalies(log_data, predictions, scores, save_path=None):
     """
-    Plot the anomalies in the log data.
+    Membuat visualisasi anomali dalam data log.
     
-    Args:
-        log_data (list): List of log lines
-        predictions (numpy.ndarray): Model predictions (1 for anomalies, 0 for normal)
-        scores (numpy.ndarray): Anomaly scores
-        save_path (str, optional): Path to save the plot
+    Parameter:
+        log_data (list): Daftar baris log
+        predictions (numpy.ndarray): Prediksi model (1 untuk anomali, 0 untuk normal)
+        scores (numpy.ndarray): Skor anomali
+        save_path (str, optional): Path untuk menyimpan visualisasi
     """
     plt.figure(figsize=(15, 6))
     
-    # Plot anomaly scores
+    # Plot skor anomali
     plt.subplot(1, 2, 1)
-    plt.plot(scores, label='Anomaly Score')
-    plt.axhline(y=np.mean(scores) + 2*np.std(scores), color='r', linestyle='--', label='Threshold')
-    plt.title('Anomaly Scores')
-    plt.xlabel('Log Entry')
-    plt.ylabel('Score')
+    plt.plot(scores, label='Skor Anomali')
+    plt.axhline(y=np.mean(scores) + 2*np.std(scores), color='r', linestyle='--', label='Ambang Batas')
+    plt.title('Skor Anomali')
+    plt.xlabel('Entri Log')
+    plt.ylabel('Skor')
     plt.legend()
     
-    # Plot predictions
+    # Plot prediksi
     plt.subplot(1, 2, 2)
     plt.scatter(range(len(predictions)), predictions, c=predictions, cmap='coolwarm')
-    plt.title('Anomaly Predictions')
-    plt.xlabel('Log Entry')
-    plt.ylabel('Prediction (1: Anomaly, 0: Normal)')
+    plt.title('Prediksi Anomali')
+    plt.xlabel('Entri Log')
+    plt.ylabel('Prediksi (1: Anomali, 0: Normal)')
     
     if save_path:
         plt.savefig(save_path)
@@ -51,37 +51,37 @@ def plot_anomalies(log_data, predictions, scores, save_path=None):
 
 def generate_report(log_data, predictions, scores, output_path):
     """
-    Generate a detailed report of the anomalies.
+    Menghasilkan laporan detail tentang anomali yang terdeteksi.
     
-    Args:
-        log_data (list): List of log lines
-        predictions (numpy.ndarray): Model predictions (1 for anomalies, 0 for normal)
-        scores (numpy.ndarray): Anomaly scores
-        output_path (str): Path to save the report
+    Parameter:
+        log_data (list): Daftar baris log
+        predictions (numpy.ndarray): Prediksi model (1 untuk anomali, 0 untuk normal)
+        scores (numpy.ndarray): Skor anomali
+        output_path (str): Path untuk menyimpan laporan
     """
     anomalies = []
     for i, (log, pred, score) in enumerate(zip(log_data, predictions, scores)):
-        if pred == 1:  # Anomaly
+        if pred == 1:  # Anomali
             anomalies.append({
                 'index': i,
                 'log': log.strip(),
                 'score': score
             })
     
-    # Sort anomalies by score
+    # Urutkan anomali berdasarkan skor
     anomalies.sort(key=lambda x: x['score'], reverse=True)
     
-    # Generate report
+    # Buat laporan
     with open(output_path, 'w') as f:
-        f.write(f"Anomaly Detection Report\n")
-        f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"Total logs analyzed: {len(log_data)}\n")
-        f.write(f"Number of anomalies detected: {len(anomalies)}\n\n")
+        f.write(f"Laporan Deteksi Anomali\n")
+        f.write(f"Dibuat pada: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Total log yang dianalisis: {len(log_data)}\n")
+        f.write(f"Jumlah anomali terdeteksi: {len(anomalies)}\n\n")
         
-        f.write("Top Anomalies:\n")
+        f.write("Anomali Teratas:\n")
         f.write("-" * 80 + "\n")
-        for anomaly in anomalies[:10]:  # Show top 10 anomalies
+        for anomaly in anomalies[:10]:  # Tampilkan 10 anomali teratas
             f.write(f"Index: {anomaly['index']}\n")
-            f.write(f"Score: {anomaly['score']:.4f}\n")
+            f.write(f"Skor: {anomaly['score']:.4f}\n")
             f.write(f"Log: {anomaly['log']}\n")
             f.write("-" * 80 + "\n") 

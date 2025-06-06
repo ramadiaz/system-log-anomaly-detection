@@ -9,13 +9,13 @@ from datetime import datetime
 
 def generate_anomaly_list(logs, predictions, scores, output_path):
     """
-    Generate a detailed report listing all detected anomalies with their scores in CSV format.
+    Menghasilkan laporan detail yang berisi daftar anomali yang terdeteksi beserta skornya dalam format CSV.
     
-    Args:
-        logs (list): List of log entries
-        predictions (array): Array of anomaly predictions (0 or 1)
-        scores (array): Array of anomaly scores
-        output_path (str): Path to save the anomaly list report
+    Parameter:
+        logs (list): Daftar entri log
+        predictions (array): Array prediksi anomali (0 atau 1)
+        scores (array): Array skor anomali
+        output_path (str): Path untuk menyimpan laporan anomali
     """
     anomaly_indices = np.where(predictions == 1)[0]
     
@@ -35,16 +35,21 @@ def generate_anomaly_list(logs, predictions, scores, output_path):
     
     # Save to CSV with additional metadata
     with open(output_path, 'w') as f:
-        f.write(f"Anomaly Detection Report\n")
-        f.write(f"Generated on: {timestamp}\n")
-        f.write(f"Total anomalies detected: {len(anomaly_indices)}\n\n")
+        f.write(f"Laporan Deteksi Anomali\n")
+        f.write(f"Dibuat pada: {timestamp}\n")
+        f.write(f"Total anomali terdeteksi: {len(anomaly_indices)}\n\n")
     
     # Append the DataFrame to the same file
     df.to_csv(output_path, mode='a', index=False)
 
 def test_model():
     """
-    Test the anomaly detection model with the prepared dataset.
+    Menguji model deteksi anomali dengan dataset yang telah disiapkan.
+    Fungsi ini akan:
+    1. Memuat dataset pengujian
+    2. Memproses data log
+    3. Membuat prediksi menggunakan model yang telah dilatih
+    4. Menghasilkan laporan dan metrik evaluasi
     """
     logging.basicConfig(
         level=logging.INFO,
@@ -52,14 +57,14 @@ def test_model():
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     
-    print("Loading test dataset...")
+    print("Memuat dataset pengujian...")
     test_df = pd.read_csv('data/test_logs.csv')
-    print(f"Total test entries: {len(test_df)}")
-    print(f"Actual anomalies in test set: {test_df['label'].sum()}")
+    print(f"Total entri pengujian: {len(test_df)}")
+    print(f"Anomali aktual dalam set pengujian: {test_df['label'].sum()}")
     
     # Calculate contamination based on actual anomaly ratio
     anomaly_ratio = test_df['label'].mean()
-    print(f"Anomaly ratio in dataset: {anomaly_ratio:.4f}")
+    print(f"Rasio anomali dalam dataset: {anomaly_ratio:.4f}")
     
     # Initialize components with calculated contamination
     preprocessor = LogPreprocessor()
@@ -69,26 +74,26 @@ def test_model():
     )
     
     # Load trained model and scaler
-    print("Loading trained model and scaler...")
+    print("Memuat model dan scaler yang telah dilatih...")
     try:
         detector.load_model('models/anomaly_detector.joblib')
         preprocessor.load_scaler('models/scaler.joblib')
     except FileNotFoundError:
-        print("Error: Model files not found. Please train the model first using:")
+        print("Error: File model tidak ditemukan. Silakan latih model terlebih dahulu menggunakan:")
         print("python src/train_model.py")
         return
     
     # Process the test data
-    print("Processing test data...")
+    print("Memproses data pengujian...")
     processed_data = preprocessor.preprocess_logs(test_df['log'].tolist())
     
     # Make predictions
-    print("Making predictions...")
+    print("Membuat prediksi...")
     predictions = detector.predict(processed_data)
     scores = detector.predict_proba(processed_data)
     
     # Generate reports
-    print("Generating reports...")
+    print("Menghasilkan laporan...")
     report_path = os.path.join('reports', 'test_report.txt')
     generate_report(test_df['log'].tolist(), predictions, scores, report_path)
     
@@ -111,15 +116,15 @@ def test_model():
     precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
     recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
     
-    print("\nTest Results:")
-    print(f"Total logs analyzed: {len(test_df)}")
-    print(f"Actual anomalies in dataset: {true_anomalies.sum()}")
-    print(f"Detected anomalies: {predicted_anomalies.sum()}")
-    print(f"Accuracy: {accuracy:.4f}")
-    print(f"Precision: {precision:.4f}")
+    print("\nHasil Pengujian:")
+    print(f"Total log yang dianalisis: {len(test_df)}")
+    print(f"Anomali aktual dalam dataset: {true_anomalies.sum()}")
+    print(f"Anomali yang terdeteksi: {predicted_anomalies.sum()}")
+    print(f"Akurasi: {accuracy:.4f}")
+    print(f"Presisi: {precision:.4f}")
     print(f"Recall: {recall:.4f}")
-    print(f"\nDetailed report saved to: {report_path}")
-    print(f"Anomaly list saved to: {anomaly_list_path}")
+    print(f"\nLaporan detail disimpan di: {report_path}")
+    print(f"Daftar anomali disimpan di: {anomaly_list_path}")
 
 if __name__ == "__main__":
     test_model() 
