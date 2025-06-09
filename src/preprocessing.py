@@ -59,17 +59,10 @@ class LogPreprocessor:
         features['block_count'] = len(re.findall(block_pattern, log_line))
         
         return features
-    
+
     def preprocess_logs(self, log_data, progress_bar=False):
         """
         Memproses daftar baris log.
-        
-        Parameter:
-            log_data (list): Daftar baris log yang akan diproses
-            progress_bar (bool): Tampilkan progress bar atau tidak
-            
-        Returns:
-            pandas.DataFrame: DataFrame berisi fitur-fitur yang diproses
         """
         # Konversi log ke DataFrame
         if progress_bar:
@@ -77,17 +70,29 @@ class LogPreprocessor:
         else:
             features_list = [self.extract_features(log) for log in log_data]
         df = pd.DataFrame(features_list)
-        
+
+        # Map log levels to anomaly scores
+        anomaly_score_map = {
+            'FATAL': 5,
+            'CRITICAL': 4,
+            'ERROR': 3,
+            'WARNING': 2,
+            'INFO': 1,
+            'DEBUG': 0,
+            'UNKNOWN': -1
+        }
+        df['anomaly_score'] = df['log_level'].map(anomaly_score_map)
+
         # Konversi variabel kategorikal
         if 'log_level' in df.columns:
             df = pd.get_dummies(df, columns=['log_level'])
-        
+
         # Skala fitur numerik
         numerical_cols = df.select_dtypes(include=[np.number]).columns
         df[numerical_cols] = self.scaler.fit_transform(df[numerical_cols])
-        
+
         return df
-    
+
     def save_scaler(self, path):
         """
         Menyimpan scaler untuk penggunaan selanjutnya.
