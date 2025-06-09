@@ -13,12 +13,14 @@ class AnomalyDetector:
             threshold_percentile (float): Persentil yang digunakan sebagai ambang batas untuk skor anomali.
         """
         self.model = IsolationForest(
-            n_estimators=100,  # Jumlah pohon ditingkatkan untuk deteksi yang lebih baik
-            max_samples='auto',
-            contamination=contamination,
+            n_estimators=50,  # Dikurangi dari 100 untuk mengurangi overfitting
+            max_samples=0.8,  # Gunakan 80% sample per tree (lebih robust)
+            contamination=contamination,  # 'auto' lebih adaptif
+            max_features=0.8,  # Gunakan 80% features per tree
             random_state=42,
-            n_jobs=4,  # Batasi ke 4 core
-            verbose=1
+            n_jobs=-1,  # Gunakan semua core yang tersedia
+            verbose=0,  # Kurangi noise output
+            bootstrap=True  # Enable bootstrap sampling
         )
         self.threshold_percentile = threshold_percentile
         self.threshold = None
